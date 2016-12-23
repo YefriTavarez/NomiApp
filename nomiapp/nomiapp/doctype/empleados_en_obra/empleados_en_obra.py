@@ -13,7 +13,7 @@ class EmpleadosenObra(Document):
 	pass
 
 @frappe.whitelist()
-def descargar_choferes(obra):
+def descargar_choferes(obra, with_data=False, emp_ob=None):
 	w = UnicodeWriter()
 	w.writerow([
 		"Empleado",
@@ -39,15 +39,32 @@ def descargar_choferes(obra):
 		"amount" 
 	])
 
-	for chofer in get_choferes_result(obra):
-		w.writerow([ chofer.employee, chofer.employee_name, 105, 15, "", "", "", 0, 0	])
+	if with_data:
+		if not emp_ob:
+			frappe.throw("Se necesita un Documento tipo Empleados en Obra para continuar!")
+
+		for chofer in get_choferes_result(obra, emp_ob):
+			w.writerow([ 
+				chofer.employee,
+				chofer.employee_name,
+				chofer.kilometer_rate,
+				chofer.adict_kilometer_rate,
+				chofer.odometer_start,
+				chofer.odometer_end,
+				chofer.kilometers,
+				chofer.is_amount,
+				chofer.amount 
+			])
+	else:
+		for chofer in get_choferes_result(obra):
+			w.writerow([ chofer.employee, chofer.employee_name, 105, 15, "", "", "", 0, 0	])
 
 	frappe.response['result'] = cstr(w.getvalue())
 	frappe.response['type'] = 'csv'
 	frappe.response['doctype'] = "template_choferes_" + str(int(time.time()))
 
 @frappe.whitelist()
-def descargar_operadores(obra):
+def descargar_operadores(obra, with_data=False, emp_ob=None):
 
 	w = UnicodeWriter()
 	w.writerow([
@@ -73,9 +90,26 @@ def descargar_operadores(obra):
 		"is_amount",
 		"amount"
 	])
-	
-	for operador in get_operadores_result(obra):
-		w.writerow([ operador.employee, operador.employee_name, 110, "", "", "", 0, 0, 0 ])
+
+	if with_data:
+		if not emp_ob:
+			frappe.throw("Se necesita un Documento tipo Empleados en Obra para continuar!")
+
+		for operador in get_operadores_result(obra, emp_ob):
+			w.writerow([ 
+				operador.employee,
+				operador.employee_name,
+				operador.rate,
+				operador.horometer_start,
+				operador.horometer_end,
+				operador.hours,
+				operador.inactive_hours,
+				operador.is_amount,
+				operador.amount
+			])
+	else:
+		for operador in get_operadores_result(obra):
+			w.writerow([ operador.employee, operador.employee_name, 110, "", "", "", 0, 0, 0 ])
 
 	frappe.response['result'] = cstr(w.getvalue())
 	frappe.response['type'] = 'csv'
@@ -83,7 +117,22 @@ def descargar_operadores(obra):
 
 
 @frappe.whitelist()
-def get_choferes_result(obra):
+def get_choferes_result(obra, emp_ob=None):
+	if emp_ob:
+		return frappe.db.sql("""SELECT 
+			chofer.employee,
+			chofer.employee_name,
+			chofer.kilometer_rate,
+			chofer.adict_kilometer_rate,
+			chofer.odometer_start,
+			chofer.odometer_end,
+			chofer.kilometers,
+			chofer.is_amount,
+			chofer.amount 
+		FROM `tabTabla de Choferes` AS chofer 
+		JOIN `tabEmpleados en Obra` project on chofer.parent = project.name 
+		WHERE project.name = %(project)s""",{"project": emp_ob }, as_dict=True)
+
 	return frappe.db.sql("""SELECT 
 		chofer.employee,
 		chofer.employee_name
@@ -93,7 +142,22 @@ def get_choferes_result(obra):
 	AND project.name = %(project)s""",{"project": obra }, as_dict=True)
 
 @frappe.whitelist()
-def get_operadores_result(obra):
+def get_operadores_result(obra, emp_ob=None):
+	if emp_ob:
+		return frappe.db.sql("""SELECT 
+			operador.employee,
+			operador.employee_name,
+			operador.rate,
+			operador.horometer_start,
+			operador.horometer_end,
+			operador.hours,
+			operador.inactive_hours,
+			operador.is_amount,
+			operador.amount
+		FROM `tabTabla de Operadores` AS operador 
+		JOIN `tabEmpleados en Obra` project on operador.parent = project.name 
+		WHERE project.name = %(project)s""",{"project": emp_ob }, as_dict=True)
+
 	return frappe.db.sql("""SELECT 
 		operador.employee,
 		operador.employee_name

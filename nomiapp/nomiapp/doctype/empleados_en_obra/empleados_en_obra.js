@@ -4,9 +4,9 @@
 frappe.ui.form.on('Empleados en Obra', {
 	refresh: function(frm) {
 		var me = this;
-
-		cur_frm.add_custom_button("Choferes", descargar_choferes,"Descargar CSV");
-		cur_frm.add_custom_button("Operadores", descargar_operadores,"Descargar CSV");
+		if(!cur_frm.doc.__islocal)
+			cur_frm.add_custom_button("Choferes", descargar_choferes,"Descargar CSV") &
+			cur_frm.add_custom_button("Operadores", descargar_operadores,"Descargar CSV");
 
 		function descargar_choferes(){
 			descargar("choferes");
@@ -24,7 +24,7 @@ frappe.ui.form.on('Empleados en Obra', {
 
 			var dowload_url = 
 				"/api/method/nomiapp.nomiapp.doctype.empleados_en_obra.empleados_en_obra.descargar_" + tabla +
-				"?obra=" + cur_frm.doc.obra;
+				"?with_data=True&emp_ob=" + cur_frm.doc.name + "&obra=" + cur_frm.doc.obra;
 			window.open(dowload_url);
 			
 		}
