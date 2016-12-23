@@ -1,0 +1,18 @@
+include MANIFEST.in
+include requirements.txt
+include *.json
+include *.md
+include *.py
+include *.txt
+recursive-include nomiapp *.css
+recursive-include nomiapp *.csv
+recursive-include nomiapp *.html
+recursive-include nomiapp *.ico
+recursive-include nomiapp *.js
+recursive-include nomiapp *.json
+recursive-include nomiapp *.md
+recursive-include nomiapp *.png
+recursive-include nomiapp *.py
+recursive-include nomiapp *.svg
+recursive-include nomiapp *.txt
+recursive-exclude nomiapp *.pyc
