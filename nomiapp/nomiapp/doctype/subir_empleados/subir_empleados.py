@@ -15,13 +15,32 @@ class SubirEmpleados(Document):
 		    "fecha": self.date		            	
 		})
 
+		if self.update_record:
+			if not self.record:
+				frappe.throw("Debe de seleccionar un Registro valido!")
+
+			empbo_doc = frappe.get_doc("Empleados en Obra", self.record)
+
+			if self.load_drivers:
+				self.clear_table(empbo_doc, "Drivers")
+
+			if self.load_operators:
+				self.clear_table(empbo_doc, "Operators")
+
+
 		if self.load_drivers:
 			self.read_file_and_add(self.load_drivers,"choferes",empbo_doc)
+
 		if self.load_operators:
 			self.read_file_and_add(self.load_operators,"operadores",empbo_doc)
 
 		if self.load_drivers or self.load_operators:
-			empbo_doc.insert()
+
+			if self.update_record:
+				empbo_doc.save()
+				
+			if not self.update_record:
+				empbo_doc.insert()
 			return "success"
 		
 	def read_file_and_add(self, path, key, doc):
@@ -42,4 +61,11 @@ class SubirEmpleados(Document):
 
 		        counter = counter + 1
 
-		        
+	def clear_table(self, record, table_field):
+		if table_field == "Drivers":
+			for rec in record.choferes:
+				rec.delete()
+
+		if table_field == "Operators":
+			for rec in record.operadores:
+				rec.delete()

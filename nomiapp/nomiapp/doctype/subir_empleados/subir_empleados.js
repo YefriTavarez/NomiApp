@@ -8,7 +8,7 @@ frappe.ui.form.on('Subir Empleados', {
 		setTimeout(function(){
 			$("button[data-fieldname=validate_and_send]")
 				.attr("class", "btn btn-primary btn-sm");
-		},400);
+		},100);
     },
 
     validate_and_send: function(frm) {
@@ -37,7 +37,9 @@ frappe.ui.form.on('Subir Empleados', {
 
 	    function delete_file_doctype(file_url) {
 	        var callback = function(response) {
-	            delete_attachment(response);
+	        	setTimeout(function(){
+	            	delete_attachment(response);
+	            }, 1000);
 	        }
 
 	        frappe.model.get_value("File", { "file_url": file_url }, "name", callback);
@@ -58,5 +60,5 @@ frappe.ui.form.on('Subir Empleados', {
 	            }
 	        });
 	    }
-    },
+    }
 });
