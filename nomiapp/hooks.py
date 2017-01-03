@@ -10,6 +10,7 @@ app_icon = "octicon octicon-flame"
 app_color = "#332"
 app_email = "soporte@soldeva.com"
 app_license = "MIT"
+fixtures = ["Custom Field"]
 
 # Includes in <head>
 # ------------------
