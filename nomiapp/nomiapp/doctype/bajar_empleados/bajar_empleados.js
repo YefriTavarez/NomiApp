@@ -29,7 +29,7 @@ function descargar(tabla){
 	}
 
 	var dowload_url = 
-		"/api/method/nomiapp.nomiapp.doctype.empleados_en_obra.empleados_en_obra.descargar_" + tabla +
+		"/api/method/nomiapp.api.descargar_" + tabla +
 		"?obra=" + cur_frm.doc.project;
 	window.open(dowload_url);
 }

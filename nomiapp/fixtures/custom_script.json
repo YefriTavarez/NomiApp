@@ -1,0 +1,29 @@
+[
+ {
+  "docstatus": 0, 
+  "doctype": "Custom Script", 
+  "dt": "Salary Slip", 
+  "modified": "2017-03-08 22:26:29.235462", 
+  "name": "Salary Slip-Client", 
+  "script": "frappe.ui.form.on(\"Salary Slip\", {\n    employee: function(frm) {\n        setTimeout(function(){\n            $c('runserverobj', { \"method\": 'validate', \"docs\": frm.doc }, function(r){frm.refresh()});\n        }, 500);\n    }\n});\n\nfrappe.ui.form.on(\"Salary Detail\", {\n    amount: function(frm){\n\tvar callback = function(response){\n\t\tcur_frm.cscript.amount(cur_frm.doc, cur_frm.doctype, cur_frm.docname);\n\t\tfrm.refresh();\n\t};\n\n\tsetTimeout(function(){\n            $c('runserverobj', { \"method\": 'validate', \"docs\": frm.doc }, callback);\n        }, 100);\n    }\n});", 
+  "script_type": "Client"
+ }, 
+ {
+  "docstatus": 0, 
+  "doctype": "Custom Script", 
+  "dt": "Project", 
+  "modified": "2016-12-27 12:22:42.762625", 
+  "name": "Project-Client", 
+  "script": "frappe.ui.form.on(\"Project\", {\n    onload: function() {\n        cur_frm.fields_dict.choferes.grid.get_field('employee').get_query = function() {\n            return {\n                filters: {\n                    \"designation\": \"Chofer\"\n                }\n            }\n        }\n\n        cur_frm.fields_dict.operadores.grid.get_field('employee').get_query = function() {\n            return {\n                filters: {\n                    \"designation\": \"Operador\"\n                }\n            }\n        }\n    },\n    refresh: function(frm) {\n        if (!cur_frm.doc.__islocal) {\n            cur_frm.add_custom_button(\"Choferes\", descargar_choferes, \"Descargar Plantilla\");\n            cur_frm.add_custom_button(\"Operadores\", descargar_operadores, \"Descargar Plantilla\");\n        }\n\n        function descargar_choferes() {\n            descargar(\"choferes\");\n        }\n\n        function descargar_operadores() {\n            descargar(\"operadores\");\n        }\n\n        function descargar(tabla) {\n            var dowload_url = \n                \"/api/method/nomiapp.nomiapp.doctype.empleados_en_obra.empleados_en_obra.descargar_\" +\n                \ttabla + \"?obra=\" + cur_frm.doc.name;\n\n            window.open(dowload_url);\n        }\n\n    }\n});", 
+  "script_type": "Client"
+ }, 
+ {
+  "docstatus": 0, 
+  "doctype": "Custom Script", 
+  "dt": "Process Payroll", 
+  "modified": "2017-01-30 19:35:10.171175", 
+  "name": "Process Payroll-Client", 
+  "script": "frappe.ui.form.on(\"Process Payroll\",{\n\tonload: function(frm){\n\t\tcur_frm.doc.payroll_frequency = \"Monthly\";\n\t\tcur_frm.trigger(\"payroll_frequency\");\n\t}\n});", 
+  "script_type": "Client"
+ }
+]
