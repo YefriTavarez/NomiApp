@@ -47,7 +47,13 @@ class SubirEmpleados(Document):
 		if not path.endswith(".csv"):
 			frappe.throw("Extension no soportada. El sistema espera solo archivos CSV!")
 
-		with open(frappe.conf.site_name + path,'rb') as csvfile:
+		if "/private/" in path:
+			full_path = "{0}{1}".format(frappe.conf.full_path2site, path)
+		else:
+			full_path = "{0}{1}{2}".format(frappe.conf.full_path2site, "/public", path)
+
+
+		with open(full_path,'rb') as csvfile:
 		    counter = 0
 		    spamreader = csv.reader(csvfile, delimiter=str(','), quotechar=str('|'))
 

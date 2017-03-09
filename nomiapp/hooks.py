@@ -10,7 +10,7 @@ app_icon = "octicon octicon-flame"
 app_color = "#332"
 app_email = "soporte@soldeva.com"
 app_license = "MIT"
-fixtures = ["Custom Field"]
+fixtures = ["Custom Field", "Custom Script"]
 
 # Includes in <head>
 # ------------------
@@ -70,6 +70,12 @@ fixtures = ["Custom Field"]
 # Document Events
 # ---------------
 # Hook on document methods and events
+
+doc_events = {
+	"Salary Slip" : {
+		"validate" : "nomiapp.api.process_missing_components"
+	}
+}
 
 # doc_events = {
 # 	"*": {
