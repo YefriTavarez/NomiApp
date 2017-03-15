@@ -354,6 +354,7 @@ def descargar_operadores(obra, with_data=False, emp_ob=None):
 	frappe.response['result'] = cstr(w.getvalue())
 	frappe.response['type'] = 'csv'
 	frappe.response['doctype'] = "template_operadores_" + str(int(time.time()))
+<<<<<<< HEAD
 
 @frappe.whitelist()
 def delete_doc_list(doctype=None):
@@ -372,4 +373,3 @@ def delete_doc_list(doctype=None):
 
 	frappe.errprint("Committing to the Database")
 	frappe.db.commit()
-
