@@ -282,11 +282,7 @@
  "issingle": 1, 
  "istable": 0, 
  "max_attachments": 0, 
-<<<<<<< HEAD
  "modified": "2017-03-14 20:35:19.645908", 
-=======
- "modified": "2017-03-08 02:58:37.571181", 
->>>>>>> bc55eb54fe37c36978fbf9dad48391fa5fcdc40d
  "modified_by": "Administrator", 
  "module": "NomiApp", 
  "name": "Subir Empleados", 

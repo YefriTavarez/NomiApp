@@ -38,9 +38,10 @@ def set_missing_earning_component(salary_slip):
 
 		if kilometers_list:
 			for row in kilometers_list:
-				amount += ((float(row.kilometers)-5)*float(row.adict_kilometer_rate))+float(row.kilometer_rate)
 				if row.is_amount:
 					amount += float(row.amount)
+				else:
+					amount += ((float(row.kilometers)-5)*float(row.adict_kilometer_rate))+float(row.kilometer_rate)
 
 			add_component_to_earnings(salary_slip, "Kilometros", amount)
 			
@@ -50,9 +51,10 @@ def set_missing_earning_component(salary_slip):
 
 		if hours_list:
 			for row in hours_list:
-				amount += float(row.hours) * float(row.rate)
 				if row.is_amount:
 					amount += float(row.amount)
+				else:
+					amount += float(row.hours) * float(row.rate)
 
 			add_component_to_earnings(salary_slip, "Horas", amount)
 			if amount < 12000:
@@ -149,7 +151,7 @@ def get_kilometros_de_chofer(chofer, from_date, to_date):
 		WHERE c.employee = '{0}' \
 		AND o.fecha >= '{1}' \
 		AND o.fecha <= '{2}' \
-		AND c.docstatus <> 2"
+		AND c.docstatus = 1"
 	.format(chofer, from_date, to_date), as_dict=True)
 
 def get_horas_de_operador(operador, from_date, to_date):
@@ -160,7 +162,7 @@ def get_horas_de_operador(operador, from_date, to_date):
 		WHERE c.employee = '{0}' \
 		AND o.fecha >= '{1}' \
 		AND o.fecha <= '{2}' \
-		AND c.docstatus <> 2"
+		AND c.docstatus = 1"
 	.format(operador, from_date, to_date), as_dict=True)
 
 def add_component_to_earnings(salary_slip, salary_component, amount):
@@ -354,7 +356,6 @@ def descargar_operadores(obra, with_data=False, emp_ob=None):
 	frappe.response['result'] = cstr(w.getvalue())
 	frappe.response['type'] = 'csv'
 	frappe.response['doctype'] = "template_operadores_" + str(int(time.time()))
-<<<<<<< HEAD
 
 @frappe.whitelist()
 def delete_doc_list(doctype=None):

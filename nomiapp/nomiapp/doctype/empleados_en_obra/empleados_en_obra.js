@@ -2,11 +2,46 @@
 // For license information, please see license.txt
 
 frappe.ui.form.on('Empleados en Obra', {
+	add_navigation_buttons: function(frm){
+		var callback = function(response){
+			if(frm.doc.__islocal || !response.message) return ;
+
+			var list = response.message;
+			var index = 0, prev_index = 0, next_index = 0;
+			var cur_route, prev_route, next_route;
+
+			for( ; index < list.length; index ++){
+				prev_index = index - 1 < 0 ? 0 : index - 1;
+				next_index = index + 1 >= list.length ? list.length - 1 : index + 1;
+
+				if(frm.doc.name == list[index].name){
+					//console.log("found");
+					prev_route = list[prev_index].name;
+					next_route = list[next_index].name;
+					cur_route = list[index].name;
+
+					break;
+				}
+			}
+
+			var route_next = function(res){ set_emp_route(next_route); };
+			var route_prev = function(res){  set_emp_route(prev_route); };
+			var set_emp_route = function(docname){ frappe.set_route("Form/Empleados en Obra",docname); };
+
+			if(next_route != prev_route) frm.add_custom_button("<< Prev", route_prev);
+
+			if(next_route != cur_route)	frm.add_custom_button("Next >>", route_next);
+		};
+		
+		$c("runserverobj", args={"method": "get_list", "docs": cur_frm.doc}, callback=callback);
+	},
 	refresh: function(frm) {
 		var me = this;
-		if(!cur_frm.doc.__islocal)
-			cur_frm.add_custom_button("Choferes", descargar_choferes,"Descargar CSV") &
-			cur_frm.add_custom_button("Operadores", descargar_operadores,"Descargar CSV");
+		if(!frm.doc.__islocal)
+			frm.add_custom_button("Choferes", descargar_choferes,"Descargar CSV") &
+			frm.add_custom_button("Operadores", descargar_operadores,"Descargar CSV");
+
+		cur_frm.trigger("add_navigation_buttons");
 
 		function descargar_choferes(){
 			descargar("choferes");
@@ -17,24 +52,22 @@ frappe.ui.form.on('Empleados en Obra', {
 		}
 
 		function descargar(tabla){
-			if(!cur_frm.doc.obra){
+			if(!frm.doc.obra){
 				frappe.msgprint("Debe de seleccionar una obra!");
 				return 1;
 			}
 
 			var dowload_url = 
 				"/api/method/nomiapp.api.descargar_" + tabla +
-				"?with_data=True&emp_ob=" + cur_frm.doc.name + "&obra=" + cur_frm.doc.obra;
+				"?with_data=True&emp_ob=" + frm.doc.name + "&obra=" + frm.doc.obra;
 			window.open(dowload_url);
 			
 		}
 	},
 	obra: function(frm){
-		if(!cur_frm.doc.obra){
-			return ;
-		}
+		if(!frm.doc.obra) return ;
 
-		cur_frm.clear_table("choferes");
+		frm.clear_table("choferes");
 
 		frappe.call({
 			method: "nomiapp.api.getChoferes",
@@ -45,13 +78,19 @@ frappe.ui.form.on('Empleados en Obra', {
 		});
 
 		function agregarChoferes(choferes){
+			if(!choferes){ 
+				frm.clear_table("choferes");
+				refresh_field("choferes");
+				return ; 
+			}
+
 			choferes.forEach(function(chofer){
 				agregarChofer(chofer);
 			});
 		}
 
 		function agregarChofer(chofer){
-			cur_frm.add_child("choferes",{
+			frm.add_child("choferes",{
 		        employee : chofer.employee,
 		        employee_name : chofer.employee_name,
 		        odometer_start: 0.0,
@@ -62,7 +101,7 @@ frappe.ui.form.on('Empleados en Obra', {
 			refresh_field("choferes");
 		}
 
-		cur_frm.clear_table("operadores");
+		frm.clear_table("operadores");
 	    
 		frappe.call({
 			method: "nomiapp.api.getOperadores",
@@ -73,6 +112,12 @@ frappe.ui.form.on('Empleados en Obra', {
 		});
 
 		function agregarOperadores(operadores){
+			if(!operadores){ 
+				frm.clear_table("operadores");
+				refresh_field("operadores");
+				return ; 
+			}
+
 			operadores.forEach(function(operador){
 				agregarOperador(operador);
 			});

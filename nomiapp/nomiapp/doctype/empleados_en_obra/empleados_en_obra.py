@@ -7,4 +7,12 @@ import frappe
 from frappe.model.document import Document
 
 class EmpleadosenObra(Document):
-	pass
+	def get_list(self):
+		doclist = frappe.db.sql("""SELECT name 
+			FROM `tabEmpleados en Obra`
+			WHERE docstatus <> 2 ORDER BY name ASC""", as_dict=True)
+
+		if not doclist:
+			return []
+
+		return doclist
