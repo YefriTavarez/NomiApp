@@ -28,7 +28,7 @@ frappe.ui.form.on('Empleados en Obra', {
 			var route_prev = function(res){  set_emp_route(prev_route); };
 			var set_emp_route = function(docname){ frappe.set_route("Form/Empleados en Obra",docname); };
 
-			if(next_route != prev_route) frm.add_custom_button("<< Prev", route_prev);
+			if(prev_route != cur_route) frm.add_custom_button("<< Prev", route_prev);
 
 			if(next_route != cur_route)	frm.add_custom_button("Next >>", route_next);
 		};
